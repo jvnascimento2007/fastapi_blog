@@ -233,12 +233,14 @@ source = { editable = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "jinja2" },
+    { name = "starlette" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.143.0" },
     { name = "jinja2", specifier = ">=3.1.6" },
+    { name = "starlette", specifier = ">=1.8.0" },
 ]
 
 [[package]]
