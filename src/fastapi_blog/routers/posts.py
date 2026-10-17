@@ -13,7 +13,11 @@ router = APIRouter()
 
 @router.get('', response_model=list[PostResponse])
 async def get_posts(db: Annotated[AsyncSession, Depends(get_db)]):
-    result = await db.execute(select(models.Post).options(selectinload(models.Post.author)))
+    result = await db.execute(
+        select(models.Post)
+        .options(selectinload(models.Post.author))
+        .order_by(models.Post.date_posted.desc())
+    )
 
     posts = result.scalars().all()
 
@@ -111,7 +115,7 @@ async def update_post_partial(post_id: int, post_data: PostUpdate, db: Annotated
 
     return post
 
-@router.delete('/api/posts/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{post_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_post(post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(
         select(models.Post).options(selectinload(models.Post.author)).where(models.Post.id == post_id)
