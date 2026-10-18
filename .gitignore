@@ -10,3 +10,5 @@ wheels/
 .venv
 
 blog.db
+
+.env

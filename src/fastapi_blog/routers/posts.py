@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-import fastapi_blog.models as models
+from fastapi_blog import models
 from fastapi_blog.database import get_db
 from fastapi_blog.schemas import PostCreate, PostResponse, PostUpdate
 

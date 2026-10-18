@@ -9,7 +9,6 @@ from fastapi.exception_handlers import (
 
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-
 from contextlib import asynccontextmanager
 from typing import Annotated
 
@@ -17,18 +16,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-import fastapi_blog.models
+import fastapi_blog.models as models
 
 from fastapi_blog.database import engine, Base, get_db
-
-from fastapi_blog.schemas import (
-    PostResponse,
-    PostCreate,
-    PostUpdate,
-    UserResponse,
-    UserCreate,
-    UserUpdate
-)
 
 from fastapi_blog.routers import users, posts
 
@@ -63,12 +53,32 @@ async def home(request: Request, db: Annotated[AsyncSession, Depends(get_db)]):
 
     posts = result.scalars().all()
 
-    return templates.TemplateResponse(request, 'home.html', {'title': 'Home', 'posts': posts})
+    return templates.TemplateResponse(
+        request, 'home.html', {'title': 'Home', 'posts': posts}
+    )
+
+@app.get("/login", include_in_schema=False)
+async def login_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "login.html",
+        {"title": "Login"},
+    )
+
+@app.get("/register", include_in_schema=False)
+async def register_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "register.html",
+        {"title": "Register"},
+    )
 
 @app.get('/posts/{post_id}', include_in_schema=False)
 async def post_page(request: Request, post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(
-        select(models.Post).options(selectinload(models.Post.author)).where(models.Post.id == post_id)
+        select(models.Post)
+        .options(selectinload(models.Post.author))
+        .where(models.Post.id == post_id)
     )
 
     post = result.scalars().first()
@@ -93,7 +103,9 @@ async def user_posts(request: Request, user_id: int, db: Annotated[AsyncSession,
         )
 
     result = await db.execute(
-        select(models.Post).options(selectinload(models.Post.author)).where(models.Post.user_id == user_id)
+        select(models.Post)
+        .options(selectinload(models.Post.author))
+        .where(models.Post.user_id == user_id)
     )
 
     posts = result.scalars().all()
