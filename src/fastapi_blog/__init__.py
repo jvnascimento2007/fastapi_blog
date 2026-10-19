@@ -73,6 +73,14 @@ async def register_page(request: Request):
         {"title": "Register"},
     )
 
+@app.get('/account', include_in_schema=False)
+async def account_page(request: Request):
+    return templates.TemplateResponse(
+        request,
+        'account.html',
+        {'title': 'Account'}
+    )
+
 @app.get('/posts/{post_id}', include_in_schema=False)
 async def post_page(request: Request, post_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
     result = await db.execute(
